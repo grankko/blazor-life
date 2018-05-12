@@ -2,22 +2,46 @@
 @using BlazorLife.Game
 @inject GameService GameService
 
-<button onclick="@DrawNextGeneration">Next gen</button>
-<button onclick="@Start">Start</button>
-<button onclick="@Stop">Stop</button>
-<span>@GameService.CurrentGenerationNumber</span>
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-8">
+            <button class="btn btn-primary" onclick="@DrawNextGeneration">Next gen</button>
+            <button class="btn btn-light" onclick="@Start">Start</button>
+            <button class="btn btn-light" onclick="@Stop">Stop</button>
+        </div>
+        <div class="col-4">
+            <span>Current generation: @GameService.CurrentGenerationNumber</span>
+        </div>
+    </div>
+</div>
 
 @functions {
+
+    public static GameService GameServiceInstance; // hack
+    public static event EventHandler UpdateCanvasEvent;
 
     bool isRunning = false;
 
     protected override void OnInit()
     {
+        if (UpdateCanvasEvent == null)
+        {
+            UpdateCanvasEvent += OnUpdateCanvas;
+
+        }
+        GameServiceInstance = GameService;
+
+        // Generate a interesting start pattern
         GameService.AddLife(11, 8);
         GameService.AddLife(12, 9);
         GameService.AddLife(10, 10);
         GameService.AddLife(11, 10);
         GameService.AddLife(12, 10);
+    }
+
+    protected void OnUpdateCanvas(object sender, EventArgs e)
+    {
+        DrawCurrentGeneration();
     }
 
     protected override void OnAfterRender()
@@ -30,14 +54,15 @@
         RegisteredFunction.Invoke<bool>("clearCanvas");
         GameService.CreateNextGeneration();
         DrawCurrentGeneration();
+        this.StateHasChanged();
     }
 
-    void DrawCurrentGeneration()
+    public void DrawCurrentGeneration()
     {
         foreach (var life in GameService.AllLife)
         {
-            var canvasX = (life.X * 5) + 100;
-            var canvasY = (life.Y * 5) + 100;
+            var canvasX = (life.X * 5);
+            var canvasY = (life.Y * 5);
 
             RegisteredFunction.Invoke<bool>("drawOnCanvas", canvasX, canvasY);
         }
@@ -50,7 +75,7 @@
 
         while (isRunning)
         {
-            await Task.Delay(1000);
+            await Task.Delay(100);
             DrawNextGeneration();
         }
     }
@@ -58,5 +83,18 @@
     void Stop()
     {
         isRunning = false;
+    }
+
+    public static void CanvasClicked(string x, string y)
+    {
+        // static context here when called from JS
+
+        int xValue = int.Parse(x) / 5;
+        int yValue = int.Parse(y) / 5;
+        
+        GameServiceInstance.AddLife(xValue, yValue);
+
+        UpdateCanvasEvent(null, EventArgs.Empty);
+
     }
 }

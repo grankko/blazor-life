@@ -12,7 +12,7 @@ namespace BlazorLife.Client
         {
             var serviceProvider = new BrowserServiceProvider(services =>
             {
-                services.AddTransient<GameService>();
+                services.AddSingleton<GameService>();
             });
 
             new BrowserRenderer(serviceProvider).AddComponent<App>("app");

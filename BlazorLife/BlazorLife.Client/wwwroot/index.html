@@ -33,6 +33,28 @@
             return true; // hack
         }
 
+        function canvasClicked(event) {
+                event = event || window.event;
+
+            var canvas = document.getElementById('playingFieldCanvas'),
+                x = event.pageX - canvas.offsetLeft,
+                y = event.pageY - canvas.offsetTop;
+
+            const assemblyName = 'BlazorLife.Client';
+            const namespace = 'BlazorLife.Client.Shared';
+            const typeName = 'Controls';
+            const methodName = 'CanvasClicked';
+
+            const selectedCustomerMethod = Blazor.platform.findMethod(
+                assemblyName,
+                namespace,
+                typeName,
+                methodName
+            );
+
+            Blazor.platform.callMethod(selectedCustomerMethod,null,[Blazor.platform.toDotNetString(x.toString()),Blazor.platform.toDotNetString(y.toString())]);
+        }
+
         Blazor.registerFunction('clearCanvas', clearCanvas);
         Blazor.registerFunction('resizeCanvas', resizeCanvas);
         Blazor.registerFunction('drawOnCanvas', function (x,y) {
@@ -43,8 +65,6 @@
             canvasContext.strokeStyle = "red";
             canvasContext.rect(x, y, 5, 5);
             canvasContext.stroke();
-
-            console.debug('drawOnCanvas triggered with x: ' + x + ' y: ' + y);
 
             return true; // hack
         });

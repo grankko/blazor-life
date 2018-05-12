@@ -2,18 +2,12 @@
 
 @page "/"
 
-<canvas id="playingFieldCanvas" onclick="@onCanvasClick"></canvas>
+<canvas id="playingFieldCanvas" onclick="canvasClicked()"></canvas>
 
 @functions {
 
     protected override void OnAfterRender()
     {
         RegisteredFunction.Invoke<bool>("resizeCanvas");
-    }
-
-    void onCanvasClick(UIMouseEventArgs e)
-    {
-        Console.WriteLine(e);
-        
     }
 }
