@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width">
-    <title>BlazorPoc</title>
+    <title>Conway's Game of Life</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
@@ -23,9 +23,17 @@
             var canvas = document.getElementById('playingFieldCanvas');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight - 180;
-            return true;
+            return true; // hack
         }
 
+        function clearCanvas() {
+            var canvas = document.getElementById('playingFieldCanvas');
+            var canvasContext = canvas.getContext("2d");
+            canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+            return true; // hack
+        }
+
+        Blazor.registerFunction('clearCanvas', clearCanvas);
         Blazor.registerFunction('resizeCanvas', resizeCanvas);
         Blazor.registerFunction('drawOnCanvas', function (x,y) {
             var canvas = document.getElementById('playingFieldCanvas');

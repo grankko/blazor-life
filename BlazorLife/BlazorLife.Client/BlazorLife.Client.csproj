@@ -26,4 +26,8 @@
     <None Include="Shared\Controls.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorLife.Game\BlazorLife.Game.csproj" />
+  </ItemGroup>
+
 </Project>

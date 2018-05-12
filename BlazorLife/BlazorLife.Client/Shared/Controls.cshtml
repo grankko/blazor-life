@@ -1,34 +1,62 @@
 ﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
+@using BlazorLife.Game
+@inject GameService GameService
 
-<button onclick="@DrawCanvas">Draw something</button>
+<button onclick="@DrawNextGeneration">Next gen</button>
 <button onclick="@Start">Start</button>
 <button onclick="@Stop">Stop</button>
+<span>@GameService.CurrentGenerationNumber</span>
 
 @functions {
 
-bool isRunning = false;
+    bool isRunning = false;
 
-void DrawCanvas()
-{
-    RegisteredFunction.Invoke<bool>("drawOnCanvas", 0, 0);
-}
-
-async void Start()
-{
-    isRunning = true;
-
-    var currentX = 0;
-
-    while (isRunning)
+    protected override void OnInit()
     {
-        await Task.Delay(1000);
-        RegisteredFunction.Invoke<bool>("drawOnCanvas", currentX, 0);
-        currentX += 5;
+        GameService.AddLife(11, 8);
+        GameService.AddLife(12, 9);
+        GameService.AddLife(10, 10);
+        GameService.AddLife(11, 10);
+        GameService.AddLife(12, 10);
     }
-}
 
-void Stop()
-{
-    isRunning = false;
-}
+    protected override void OnAfterRender()
+    {
+        DrawCurrentGeneration();
+    }
+
+    void DrawNextGeneration()
+    {
+        RegisteredFunction.Invoke<bool>("clearCanvas");
+        GameService.CreateNextGeneration();
+        DrawCurrentGeneration();
+    }
+
+    void DrawCurrentGeneration()
+    {
+        foreach (var life in GameService.AllLife)
+        {
+            var canvasX = (life.X * 5) + 100;
+            var canvasY = (life.Y * 5) + 100;
+
+            RegisteredFunction.Invoke<bool>("drawOnCanvas", canvasX, canvasY);
+        }
+    }
+
+    async void Start()
+    {
+        isRunning = true;
+
+
+        while (isRunning)
+        {
+            await Task.Delay(1000);
+            DrawNextGeneration();
+        }
+    }
+
+    void Stop()
+    {
+        isRunning = false;
+    }
 }
