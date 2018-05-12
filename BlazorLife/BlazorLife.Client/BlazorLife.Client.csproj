@@ -14,4 +14,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <BlazorGenerate Remove="Shared\Controls.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Shared\Controls.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Shared\Controls.cshtml" />
+  </ItemGroup>
+
 </Project>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width">
-    <title>BlazorLife</title>
+    <title>BlazorPoc</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
@@ -11,6 +11,35 @@
 <body>
     <app>Loading...</app>
 
-    <script type="blazor-boot"></script>
+    <script type="blazor-boot">
+    </script>
+    <script>
+
+        (function () {
+            window.addEventListener('resize', resizeCanvas, false);
+        })();
+
+        function resizeCanvas() {
+            var canvas = document.getElementById('playingFieldCanvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - 180;
+            return true;
+        }
+
+        Blazor.registerFunction('resizeCanvas', resizeCanvas);
+        Blazor.registerFunction('drawOnCanvas', function (x,y) {
+            var canvas = document.getElementById('playingFieldCanvas');
+            var canvasContext = canvas.getContext("2d");
+            canvasContext.beginPath();
+            canvasContext.lineWidth = "1";
+            canvasContext.strokeStyle = "red";
+            canvasContext.rect(x, y, 5, 5);
+            canvasContext.stroke();
+
+            console.debug('drawOnCanvas triggered with x: ' + x + ' y: ' + y);
+
+            return true; // hack
+        });
+    </script>
 </body>
 </html>
