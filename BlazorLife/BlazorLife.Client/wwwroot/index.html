@@ -19,6 +19,8 @@
             window.addEventListener('resize', resizeCanvas, false);
         })();
 
+        // Interop from Blazor to JS to resize canvas when app has loaded
+        // Also resize on window event
         function resizeCanvas() {
             var canvas = document.getElementById('playingFieldCanvas');
             canvas.width = window.innerWidth;
@@ -26,6 +28,7 @@
             return true; // hack
         }
 
+        // Interop from Blazor to JS to clear canvas
         function clearCanvas() {
             var canvas = document.getElementById('playingFieldCanvas');
             var canvasContext = canvas.getContext("2d");
@@ -33,6 +36,20 @@
             return true; // hack
         }
 
+        // Interop from Blazor to JS
+        function drawOnCanvas(x, y, pixelSize) {
+            var canvas = document.getElementById('playingFieldCanvas');
+            var canvasContext = canvas.getContext("2d");
+            canvasContext.beginPath();
+            canvasContext.lineWidth = "1";
+            canvasContext.strokeStyle = "red";
+            canvasContext.rect(x, y, pixelSize, pixelSize);
+            canvasContext.stroke();
+
+            return true; // hack
+        }
+
+        // Interop from JS to Blazor when Canvas is clicked to carry coordinates
         function canvasClicked(event) {
                 event = event || window.event;
 
@@ -55,19 +72,10 @@
             Blazor.platform.callMethod(selectedCustomerMethod,null,[Blazor.platform.toDotNetString(x.toString()),Blazor.platform.toDotNetString(y.toString())]);
         }
 
+        // Register interops from Blazor to JS
         Blazor.registerFunction('clearCanvas', clearCanvas);
         Blazor.registerFunction('resizeCanvas', resizeCanvas);
-        Blazor.registerFunction('drawOnCanvas', function (x,y) {
-            var canvas = document.getElementById('playingFieldCanvas');
-            var canvasContext = canvas.getContext("2d");
-            canvasContext.beginPath();
-            canvasContext.lineWidth = "1";
-            canvasContext.strokeStyle = "red";
-            canvasContext.rect(x, y, 5, 5);
-            canvasContext.stroke();
-
-            return true; // hack
-        });
+        Blazor.registerFunction('drawOnCanvas', drawOnCanvas);
     </script>
 </body>
 </html>

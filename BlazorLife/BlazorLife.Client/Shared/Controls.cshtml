@@ -3,7 +3,7 @@
 @inject GameService GameService
 
 <div class="container">
-    <div class="row align-items-center">
+    <div class="row align-items-center" style="margin-top: 20px;">
         <div class="col-8">
             <button class="btn btn-primary" onclick="@DrawNextGeneration">Next gen</button>
             <button class="btn btn-light" onclick="@Start">Start</button>
@@ -20,7 +20,8 @@
     public static GameService GameServiceInstance; // hack
     public static event EventHandler UpdateCanvasEvent;
 
-    bool isRunning = false;
+    private bool isRunning = false;
+    const int canvasPixelSize = 5;
 
     protected override void OnInit()
     {
@@ -61,10 +62,10 @@
     {
         foreach (var life in GameService.AllLife)
         {
-            var canvasX = (life.X * 5);
-            var canvasY = (life.Y * 5);
+            var canvasX = (life.X * canvasPixelSize);
+            var canvasY = (life.Y * canvasPixelSize);
 
-            RegisteredFunction.Invoke<bool>("drawOnCanvas", canvasX, canvasY);
+            RegisteredFunction.Invoke<bool>("drawOnCanvas", canvasX, canvasY, canvasPixelSize);
         }
     }
 
@@ -89,12 +90,11 @@
     {
         // static context here when called from JS
 
-        int xValue = int.Parse(x) / 5;
-        int yValue = int.Parse(y) / 5;
+        int xValue = int.Parse(x) / canvasPixelSize;
+        int yValue = int.Parse(y) / canvasPixelSize;
         
         GameServiceInstance.AddLife(xValue, yValue);
 
-        UpdateCanvasEvent(null, EventArgs.Empty);
-
+        UpdateCanvasEvent(null, EventArgs.Empty); // signal instance of __Controls to redraw canvas
     }
 }

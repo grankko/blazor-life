@@ -31,7 +31,7 @@ namespace BlazorLife.Game
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return new { X, Y }.GetHashCode();
         }
 
         public List<LifeInstance> GetNeighbouringCells()
