@@ -12,8 +12,8 @@
             <button class="btn btn-secondary" onclick="@DrawNextGeneration">Step one generation</button>
         </div>
         <div class="col-4">
-            <div>Current live cells: @GameService.NumberOfCurrentLiveCells</div>
-            <div>Current generation: @GameService.CurrentGenerationNumber</div>
+            <div>Current live cells: <span id="currentLiveCellsSpan">@GameService.NumberOfCurrentLiveCells</span></div>
+            <div>Current generation: <span id="currentGenerationSpan">@GameService.CurrentGenerationNumber</span></div>
         </div>
     </div>
 </div>
@@ -21,7 +21,9 @@
 @functions {
 
     public bool IsRunning = false;
+
     private Timer _timer;
+    private bool _isFirstRender = true;
 
     const int CanvasCellSize = 5;
     const int SleepTimeBetweenGenerations = 100;
@@ -32,16 +34,22 @@
         _timer = new Timer();
         _timer.Interval = SleepTimeBetweenGenerations;
         _timer.Elapsed += TimerElapsed;
+
+        CreateGlider();
+    }
+
+    protected override void OnAfterRender()
+    {
+        if (_isFirstRender)
+            Reset();
+
+        _isFirstRender = false;
     }
 
     protected void TimerElapsed(object sender, ElapsedEventArgs e)
     {
         DrawNextGeneration();
-    }
-
-    protected override void OnAfterRender()
-    {
-        Reset();
+        this.StateHasChanged();
     }
 
     protected void CanvasClicked(object sender, CanvasClickedEventArgs e)
@@ -67,7 +75,6 @@
 
         CanvasFunctions.ClearCanvas();
         CanvasFunctions.DrawCellsOnCanvas(xCoordinates, yCoordinates, CanvasCellSize);
-        this.StateHasChanged();
     }
 
     void Start()
@@ -87,14 +94,17 @@
         Stop();
         GameService.Reset();
         CanvasFunctions.ClearCanvas();
+        CreateGlider();
 
-        // Generate a interesting start pattern
+        DrawCurrentGeneration();
+    }
+
+    void CreateGlider()
+    {
         GameService.AddLife(11, 8);
         GameService.AddLife(12, 9);
         GameService.AddLife(10, 10);
         GameService.AddLife(11, 10);
         GameService.AddLife(12, 10);
-
-        DrawCurrentGeneration();
     }
 }
