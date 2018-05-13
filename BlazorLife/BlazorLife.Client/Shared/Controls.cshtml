@@ -1,14 +1,19 @@
 ﻿@using BlazorLife.Game
 @using BlazorLife.Client.Interop
+@using System.Timers;
 @inject GameService GameService
 
 <div class="container">
     <div class="row" style="margin-top: 20px;">
         <div class="col-8">
-            <button class="btn btn-primary" onclick="@DrawNextGeneration">Next gen</button>
-            <button class="btn btn-light" onclick="@Start">Start</button>
-            <button class="btn btn-light" onclick="@Stop">Stop</button>
-            <button class="btn btn-light" onclick="@Reset">Reset</button>
+            <button class="btn btn-primary" onclick="@Start">Start</button>
+            <button class="btn btn-primary" onclick="@Stop">Stop</button>
+            <button class="btn btn-secondary" onclick="@Reset">Reset</button>
+            <button class="btn btn-secondary" onclick="@DrawNextGeneration">Step one generation</button>
+        </div>
+        <div class="col-4">
+            <div>Current live cells: @GameService.NumberOfCurrentLiveCells</div>
+            <div>Current generation: @GameService.CurrentGenerationNumber</div>
         </div>
     </div>
 </div>
@@ -16,6 +21,7 @@
 @functions {
 
     public bool IsRunning = false;
+    private Timer _timer;
 
     const int CanvasCellSize = 5;
     const int SleepTimeBetweenGenerations = 100;
@@ -23,6 +29,14 @@
     protected override void OnInit()
     {
         CanvasFunctions.OnCanvasClicked += CanvasClicked;
+        _timer = new Timer();
+        _timer.Interval = SleepTimeBetweenGenerations;
+        _timer.Elapsed += TimerElapsed;
+    }
+
+    protected void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        DrawNextGeneration();
     }
 
     protected override void OnAfterRender()
@@ -42,10 +56,7 @@
 
     void DrawNextGeneration()
     {
-        var startDrawTime = DateTime.Now;
-
         GameService.CreateNextGeneration();
-
         DrawCurrentGeneration();
     }
 
@@ -59,20 +70,16 @@
         this.StateHasChanged();
     }
 
-    async void Start()
+    void Start()
     {
         IsRunning = true;
-
-        while (IsRunning)
-        {
-            await Task.Delay(SleepTimeBetweenGenerations);
-            DrawNextGeneration();
-        }
+        _timer.Enabled = true;
     }
 
     void Stop()
     {
         IsRunning = false;
+        _timer.Enabled = false;
     }
 
     void Reset()
@@ -80,7 +87,7 @@
         Stop();
         GameService.Reset();
         CanvasFunctions.ClearCanvas();
-        
+
         // Generate a interesting start pattern
         GameService.AddLife(11, 8);
         GameService.AddLife(12, 9);
