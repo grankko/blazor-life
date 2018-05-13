@@ -1,110 +1,61 @@
-﻿@using BlazorLife.Game
+﻿@using BlazorLife.Client.ViewModels
 @using BlazorLife.Client.Interop
 @using System.Timers;
-@inject GameService GameService
+@inject GameViewModel ViewModel
 
 <div class="container">
     <div class="row" style="margin-top: 20px;">
         <div class="col-8">
-            <button class="btn btn-primary" onclick="@Start">Start</button>
-            <button class="btn btn-primary" onclick="@Stop">Stop</button>
-            <button class="btn btn-secondary" onclick="@Reset">Reset</button>
-            <button class="btn btn-secondary" onclick="@DrawNextGeneration">Step one generation</button>
+            <button class="btn btn-primary" onclick="@ViewModel.Start">Start</button>
+            <button class="btn btn-primary" onclick="@ViewModel.Stop">Stop</button>
+            <button class="btn btn-secondary" onclick="@ViewModel.Reset">Reset</button>
+            <button class="btn btn-secondary" onclick="@ViewModel.StepOneGeneration">Step one generation</button>
         </div>
         <div class="col-4">
-            <div>Current live cells: <span id="currentLiveCellsSpan">@GameService.NumberOfCurrentLiveCells</span></div>
-            <div>Current generation: <span id="currentGenerationSpan">@GameService.CurrentGenerationNumber</span></div>
+            <div>Current live cells: <span id="currentLiveCellsSpan">@ViewModel.NumberOfLiveCells</span></div>
+            <div>Current generation: <span id="currentGenerationSpan">@ViewModel.CurrentGeneration</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="btn-group" role="group" aria-label="Tools">
+                <button type="button" class="btn btn-secondary" onclick="@(e => ViewModel.SelectedTool = Tool.Cell)" disabled=@(ViewModel.SelectedTool == Tool.Cell)>Cell</button>
+                <button type="button" class="btn btn-secondary" onclick="@(e => ViewModel.SelectedTool = Tool.Glider)" disabled=@(ViewModel.SelectedTool == Tool.Glider)>Glider</button>
+            </div>
         </div>
     </div>
 </div>
 
 @functions {
 
-    public bool IsRunning = false;
-
-    private Timer _timer;
     private bool _isFirstRender = true;
 
-    const int CanvasCellSize = 5;
-    const int SleepTimeBetweenGenerations = 100;
-
-    protected override void OnInit()
-    {
-        CanvasFunctions.OnCanvasClicked += CanvasClicked;
-        _timer = new Timer();
-        _timer.Interval = SleepTimeBetweenGenerations;
-        _timer.Elapsed += TimerElapsed;
-
-        CreateGlider();
-    }
-
+    /// <summary>
+    /// Hack. Way to make ViewModel paint when canvas is first available
+    /// </summary>
     protected override void OnAfterRender()
     {
         if (_isFirstRender)
-            Reset();
+            ViewModel.Init();
 
         _isFirstRender = false;
     }
 
-    protected void TimerElapsed(object sender, ElapsedEventArgs e)
+    protected override void OnInit()
     {
-        DrawNextGeneration();
+        CanvasFunctions.CanvasClicked += OnCanvasClicked;
+        ViewModel.StateChanged += OnStateChanged;
+    }
+
+    protected void OnCanvasClicked(object sender, CanvasClickedEventArgs e)
+    {
+        ViewModel.AddLife(e.X, e.Y);
         this.StateHasChanged();
     }
 
-    protected void CanvasClicked(object sender, CanvasClickedEventArgs e)
+    protected void OnStateChanged(object sender, EventArgs e)
     {
-        int xValue = e.X / CanvasCellSize;
-        int yValue = e.Y / CanvasCellSize;
-
-        GameService.AddLife(xValue, yValue);
-
-        DrawCurrentGeneration();
+        this.StateHasChanged();
     }
 
-    void DrawNextGeneration()
-    {
-        GameService.CreateNextGeneration();
-        DrawCurrentGeneration();
-    }
-
-    void DrawCurrentGeneration()
-    {
-        var xCoordinates = new List<int>(GameService.AllLife.Select(life => life.X * CanvasCellSize)).ToList();
-        var yCoordinates = new List<int>(GameService.AllLife.Select(life => life.Y * CanvasCellSize)).ToList();
-
-        CanvasFunctions.ClearCanvas();
-        CanvasFunctions.DrawCellsOnCanvas(xCoordinates, yCoordinates, CanvasCellSize);
-    }
-
-    void Start()
-    {
-        IsRunning = true;
-        _timer.Enabled = true;
-    }
-
-    void Stop()
-    {
-        IsRunning = false;
-        _timer.Enabled = false;
-    }
-
-    void Reset()
-    {
-        Stop();
-        GameService.Reset();
-        CanvasFunctions.ClearCanvas();
-        CreateGlider();
-
-        DrawCurrentGeneration();
-    }
-
-    void CreateGlider()
-    {
-        GameService.AddLife(11, 8);
-        GameService.AddLife(12, 9);
-        GameService.AddLife(10, 10);
-        GameService.AddLife(11, 10);
-        GameService.AddLife(12, 10);
-    }
 }

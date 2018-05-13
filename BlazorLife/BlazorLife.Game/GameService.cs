@@ -8,7 +8,6 @@ namespace BlazorLife.Game
         public HashSet<LifeInstance> AllLife { get; private set; }
 
         public int CurrentGenerationNumber { get; set; }
-        public int NumberOfCurrentLiveCells { get { return AllLife.Count; } }
 
         public GameService()
         {
@@ -54,6 +53,12 @@ namespace BlazorLife.Game
             // Set new calculated generation to current generation
             AllLife = nextGeneration;
             CurrentGenerationNumber++;
+        }
+
+        public void AddLife(IEnumerable<LifeInstance> life)
+        {
+            foreach (var newLife in life)
+                AddLife(newLife);
         }
 
         public void AddLife(LifeInstance life)

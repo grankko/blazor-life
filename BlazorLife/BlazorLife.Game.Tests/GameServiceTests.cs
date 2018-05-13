@@ -18,9 +18,9 @@ namespace BlazorLife.Game.Tests
         public void CanAddLife()
         {
             var sut = new GameService();
-            Assert.AreEqual(0, sut.NumberOfCurrentLiveCells);
+            Assert.AreEqual(0, sut.AllLife.Count);
             sut.AddLife(0, 1);
-            Assert.AreEqual(1, sut.NumberOfCurrentLiveCells);
+            Assert.AreEqual(1, sut.AllLife.Count);
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace BlazorLife.Game.Tests
             sut.CreateNextGeneration();
 
             Assert.AreEqual(1, sut.CurrentGenerationNumber);
-            Assert.AreEqual(0, sut.NumberOfCurrentLiveCells);
+            Assert.AreEqual(0, sut.AllLife.Count);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace BlazorLife.Game.Tests
             sut.CreateNextGeneration();
 
             Assert.AreEqual(1, sut.CurrentGenerationNumber);
-            Assert.AreEqual(3, sut.NumberOfCurrentLiveCells);
+            Assert.AreEqual(3, sut.AllLife.Count);
         }
     }
 }

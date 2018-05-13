@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Blazor.Browser.Services;
 using BlazorLife.Game;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using BlazorLife.Client.ViewModels;
 
 namespace BlazorLife.Client
 {
@@ -13,6 +14,7 @@ namespace BlazorLife.Client
             var serviceProvider = new BrowserServiceProvider(services =>
             {
                 services.AddSingleton<GameService>();
+                services.AddSingleton<GameViewModel>();
             });
 
             new BrowserRenderer(serviceProvider).AddComponent<App>("app");

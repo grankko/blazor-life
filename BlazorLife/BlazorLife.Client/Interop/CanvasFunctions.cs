@@ -8,7 +8,7 @@ namespace BlazorLife.Client.Interop
 {
     public static class CanvasFunctions
     {
-        public static event EventHandler<CanvasClickedEventArgs> OnCanvasClicked;
+        public static event EventHandler<CanvasClickedEventArgs> CanvasClicked;
 
         public static void ClearCanvas()
         {
@@ -25,12 +25,12 @@ namespace BlazorLife.Client.Interop
             RegisteredFunction.Invoke<bool>("resizeCanvas");
         }
 
-        public static void CanvasClicked(string x, string y)
+        public static void OnCanvasClicked(string x, string y)
         {
             int xValue = int.Parse(x);
             int yValue = int.Parse(y);
 
-            OnCanvasClicked(null, new CanvasClickedEventArgs(xValue, yValue));
+            CanvasClicked(null, new CanvasClickedEventArgs(xValue, yValue));
         }
     }
 }
