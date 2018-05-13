@@ -49,6 +49,22 @@
             return true; // hack
         }
 
+        // Interop from Blazor to JS
+        function drawAllOnCanvas(x, y, pixelSize) {
+            var canvas = document.getElementById('playingFieldCanvas');
+            var canvasContext = canvas.getContext("2d");
+            canvasContext.beginPath();
+            canvasContext.lineWidth = "1";
+            canvasContext.strokeStyle = "red";
+
+            for (var i = 0; i < x.length; i++) {
+                canvasContext.rect(x[i], y[i], pixelSize, pixelSize);
+            }
+            canvasContext.stroke();
+
+            return true; // hack
+        }
+
         // Interop from JS to Blazor when Canvas is clicked to carry coordinates
         function canvasClicked(event) {
                 event = event || window.event;
@@ -58,8 +74,8 @@
                 y = event.pageY - canvas.offsetTop;
 
             const assemblyName = 'BlazorLife.Client';
-            const namespace = 'BlazorLife.Client.Shared';
-            const typeName = 'Controls';
+            const namespace = 'BlazorLife.Client.Interop';
+            const typeName = 'CanvasFunctions';
             const methodName = 'CanvasClicked';
 
             const selectedCustomerMethod = Blazor.platform.findMethod(
@@ -76,6 +92,7 @@
         Blazor.registerFunction('clearCanvas', clearCanvas);
         Blazor.registerFunction('resizeCanvas', resizeCanvas);
         Blazor.registerFunction('drawOnCanvas', drawOnCanvas);
+        Blazor.registerFunction('drawAllOnCanvas', drawAllOnCanvas);
     </script>
 </body>
 </html>

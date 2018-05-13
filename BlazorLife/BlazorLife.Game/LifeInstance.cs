@@ -37,7 +37,7 @@ namespace BlazorLife.Game
         public List<LifeInstance> GetNeighbouringCells()
         {
             List<LifeInstance> neighbouringCells = new List<LifeInstance>();
-            for (int deltaX = -1; deltaX <2; deltaX++) {
+            for (int deltaX = -1; deltaX < 2; deltaX++) {
                 for (int deltaY = -1; deltaY < 2; deltaY++)
                 {
                     var potentialCell = new LifeInstance(X + deltaX, Y + deltaY);

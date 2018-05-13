@@ -43,11 +43,6 @@ namespace BlazorLife.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(name: "default", template: "{controller}/{action}/{id?}");
-            });
-
             app.UseBlazor<Client.Program>();
         }
     }

@@ -18,7 +18,9 @@ namespace BlazorLife.Game.Tests
         public void CanAddLife()
         {
             var sut = new GameService();
+            Assert.AreEqual(0, sut.NumberOfCurrentLiveCells);
             sut.AddLife(0, 1);
+            Assert.AreEqual(1, sut.NumberOfCurrentLiveCells);
         }
 
         [TestMethod]

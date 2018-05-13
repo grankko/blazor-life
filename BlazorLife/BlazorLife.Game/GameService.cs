@@ -5,11 +5,10 @@ namespace BlazorLife.Game
 {
     public class GameService
     {
-        public HashSet<LifeInstance> AllLife { get { return _allLife; } }
-        private HashSet<LifeInstance> _allLife;
-               
+        public HashSet<LifeInstance> AllLife { get; private set; }
+
         public int CurrentGenerationNumber { get; set; }
-        public int NumberOfCurrentLiveCells { get { return _allLife.Count; } }
+        public int NumberOfCurrentLiveCells { get { return AllLife.Count; } }
 
         public GameService()
         {
@@ -18,7 +17,7 @@ namespace BlazorLife.Game
 
         public void Reset()
         {
-            _allLife = new HashSet<LifeInstance>();
+            AllLife = new HashSet<LifeInstance>();
             CurrentGenerationNumber = 0;
         }
 
@@ -31,8 +30,8 @@ namespace BlazorLife.Game
         public void CreateNextGeneration()
         {
             HashSet<LifeInstance> nextGeneration = new HashSet<LifeInstance>();
-
-            foreach (var life in _allLife)
+            
+            foreach (var life in AllLife)
             {
                 // If living cell has 2 or three living neighbours it lives on to the next generation
                 var noOfLiveNeighbours = GetNumberOfNeighbours(life);
@@ -53,7 +52,7 @@ namespace BlazorLife.Game
             }
 
             // Set new calculated generation to current generation
-            _allLife = nextGeneration;
+            AllLife = nextGeneration;
             CurrentGenerationNumber++;
         }
 
@@ -65,7 +64,7 @@ namespace BlazorLife.Game
         public void AddLife(int x, int y)
         {
             var newLife = new LifeInstance(x, y);
-            if (!_allLife.Add(newLife))
+            if (!AllLife.Add(newLife))
                 throw new InvalidOperationException($"Life {newLife} already exists");
         }
 
@@ -76,7 +75,7 @@ namespace BlazorLife.Game
             var neighbouringCells = life.GetNeighbouringCells();
             foreach (var cell in neighbouringCells)
             {
-                if (_allLife.Contains(cell))
+                if (AllLife.Contains(cell))
                     numberOfNeighbours++;
             }
 

@@ -1,100 +1,93 @@
-﻿@using Microsoft.AspNetCore.Blazor.Browser.Interop
-@using BlazorLife.Game
+﻿@using BlazorLife.Game
+@using BlazorLife.Client.Interop
 @inject GameService GameService
 
 <div class="container">
-    <div class="row align-items-center" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 20px;">
         <div class="col-8">
             <button class="btn btn-primary" onclick="@DrawNextGeneration">Next gen</button>
             <button class="btn btn-light" onclick="@Start">Start</button>
             <button class="btn btn-light" onclick="@Stop">Stop</button>
-        </div>
-        <div class="col-4">
-            <span>Current generation: @GameService.CurrentGenerationNumber</span>
+            <button class="btn btn-light" onclick="@Reset">Reset</button>
         </div>
     </div>
 </div>
 
 @functions {
 
-    public static GameService GameServiceInstance; // hack
-    public static event EventHandler UpdateCanvasEvent;
+    public bool IsRunning = false;
 
-    private bool isRunning = false;
-    const int canvasPixelSize = 5;
+    const int CanvasCellSize = 5;
+    const int SleepTimeBetweenGenerations = 100;
 
     protected override void OnInit()
     {
-        if (UpdateCanvasEvent == null)
-        {
-            UpdateCanvasEvent += OnUpdateCanvas;
-
-        }
-        GameServiceInstance = GameService;
-
-        // Generate a interesting start pattern
-        GameService.AddLife(11, 8);
-        GameService.AddLife(12, 9);
-        GameService.AddLife(10, 10);
-        GameService.AddLife(11, 10);
-        GameService.AddLife(12, 10);
-    }
-
-    protected void OnUpdateCanvas(object sender, EventArgs e)
-    {
-        DrawCurrentGeneration();
+        CanvasFunctions.OnCanvasClicked += CanvasClicked;
     }
 
     protected override void OnAfterRender()
     {
+        Reset();
+    }
+
+    protected void CanvasClicked(object sender, CanvasClickedEventArgs e)
+    {
+        int xValue = e.X / CanvasCellSize;
+        int yValue = e.Y / CanvasCellSize;
+
+        GameService.AddLife(xValue, yValue);
+
         DrawCurrentGeneration();
     }
 
     void DrawNextGeneration()
     {
-        RegisteredFunction.Invoke<bool>("clearCanvas");
+        var startDrawTime = DateTime.Now;
+
         GameService.CreateNextGeneration();
+
         DrawCurrentGeneration();
-        this.StateHasChanged();
     }
 
-    public void DrawCurrentGeneration()
+    void DrawCurrentGeneration()
     {
-        foreach (var life in GameService.AllLife)
-        {
-            var canvasX = (life.X * canvasPixelSize);
-            var canvasY = (life.Y * canvasPixelSize);
+        var xCoordinates = new List<int>(GameService.AllLife.Select(life => life.X * CanvasCellSize)).ToList();
+        var yCoordinates = new List<int>(GameService.AllLife.Select(life => life.Y * CanvasCellSize)).ToList();
 
-            RegisteredFunction.Invoke<bool>("drawOnCanvas", canvasX, canvasY, canvasPixelSize);
-        }
+        CanvasFunctions.ClearCanvas();
+        CanvasFunctions.DrawCellsOnCanvas(xCoordinates, yCoordinates, CanvasCellSize);
+        this.StateHasChanged();
     }
 
     async void Start()
     {
-        isRunning = true;
+        IsRunning = true;
 
-
-        while (isRunning)
+        while (IsRunning)
         {
-            await Task.Delay(100);
+            await Task.Delay(SleepTimeBetweenGenerations);
             DrawNextGeneration();
         }
     }
 
     void Stop()
     {
-        isRunning = false;
+        IsRunning = false;
     }
 
-    public static void CanvasClicked(string x, string y)
+    void Reset()
     {
-        // static context here when called from JS
-
-        int xValue = int.Parse(x) / canvasPixelSize;
-        int yValue = int.Parse(y) / canvasPixelSize;
+        Stop();
+        GameService.Reset();
+        CanvasFunctions.ClearCanvas();
         
-        GameServiceInstance.AddLife(xValue, yValue);
+        // Generate a interesting start pattern
+        GameService.AddLife(11, 8);
+        GameService.AddLife(12, 9);
+        GameService.AddLife(10, 10);
+        GameService.AddLife(11, 10);
+        GameService.AddLife(12, 10);
 
-        UpdateCanvasEvent(null, EventArgs.Empty); // signal instance of __Controls to redraw canvas
+        DrawCurrentGeneration();
     }
 }
