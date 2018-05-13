@@ -55,6 +55,7 @@ namespace BlazorLife.Client.ViewModels
 
         public void Init()
         {
+            CanvasFunctions.AddCanvasMouseEvent();
             DrawCurrentGeneration();
         }
 

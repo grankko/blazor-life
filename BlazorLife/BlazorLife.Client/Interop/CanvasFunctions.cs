@@ -10,6 +10,11 @@ namespace BlazorLife.Client.Interop
     {
         public static event EventHandler<CanvasClickedEventArgs> CanvasClicked;
 
+        public static void AddCanvasMouseEvent()
+        {
+            RegisteredFunction.Invoke<bool>("addCanvasMouseEvent");
+        }
+
         public static void ClearCanvas()
         {
             RegisteredFunction.Invoke<bool>("clearCanvas");
