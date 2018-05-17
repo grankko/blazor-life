@@ -16,6 +16,7 @@
         <div class="col-4">
             <div>Current live cells: <span id="currentLiveCellsSpan">@ViewModel.NumberOfLiveCells</span></div>
             <div>Current generation: <span id="currentGenerationSpan">@ViewModel.CurrentGeneration</span></div>
+            <div>Avg generation time: <span id="currentGenerationSpan">@ViewModel.AverageGenerationTime</span></div>
         </div>
     </div>
     <div class="row">
@@ -23,6 +24,7 @@
             <div class="btn-group" role="group" aria-label="Tools">
                 <button type="button" class="btn btn-secondary" onclick="@(e => ViewModel.SelectedTool = Tool.Cell)" disabled=@(ViewModel.SelectedTool == Tool.Cell)>Cell</button>
                 <button type="button" class="btn btn-secondary" onclick="@(e => ViewModel.SelectedTool = Tool.Glider)" disabled=@(ViewModel.SelectedTool == Tool.Glider)>Glider</button>
+                <button type="button" class="btn btn-secondary" onclick="@(e => ViewModel.SelectedTool = Tool.Infinite)" disabled=@(ViewModel.SelectedTool == Tool.Infinite)>Infinite</button>
             </div>
         </div>
     </div>

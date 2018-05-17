@@ -2,6 +2,7 @@
 using BlazorLife.Game;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -11,7 +12,8 @@ namespace BlazorLife.Client.ViewModels
     public enum Tool
     {
         Cell,
-        Glider
+        Glider,
+        Infinite
     }
 
     public class GameViewModel
@@ -21,6 +23,7 @@ namespace BlazorLife.Client.ViewModels
      
         private Timer _timer;
         private GameService _gameService;
+        private Stopwatch _watch;
 
         public bool IsRunning { get; set; }
         public Tool SelectedTool;
@@ -42,6 +45,8 @@ namespace BlazorLife.Client.ViewModels
             }
         }
 
+        public long AverageGenerationTime { get; private set; }
+
         public GameViewModel(GameService gameService)
         {
             _gameService = gameService;
@@ -49,7 +54,8 @@ namespace BlazorLife.Client.ViewModels
             _timer.Interval = SleepTimeBetweenGenerations;
             _timer.Elapsed += TimerElapsed;
 
-            _gameService.AddLife(Creatures.CreateGlider(10, 10));
+            _watch = new Stopwatch();
+            
             SelectedTool = Tool.Cell;
         }
 
@@ -63,6 +69,7 @@ namespace BlazorLife.Client.ViewModels
         {
             StepOneGeneration();
             DrawCurrentGeneration();
+            AverageGenerationTime = _watch.ElapsedMilliseconds / this.CurrentGeneration;
         }
 
         public void AddLife(int xCoordinate, int yCoordinate)
@@ -78,7 +85,10 @@ namespace BlazorLife.Client.ViewModels
                     break;
                 case Tool.Glider:
                     _gameService.AddLife(Creatures.CreateGlider(x, y));
-                    break;                
+                    break;
+                case Tool.Infinite:
+                    _gameService.AddLife(Creatures.CreateInfinite(x, y));
+                    break;
             }
             
             DrawCurrentGeneration();
@@ -96,12 +106,14 @@ namespace BlazorLife.Client.ViewModels
         {
             IsRunning = true;
             _timer.Enabled = true;
+            _watch.Start();
         }
 
         public void Stop()
         {
             IsRunning = false;
             _timer.Enabled = false;
+            _watch.Stop();
         }
 
         public void Reset()
@@ -111,6 +123,7 @@ namespace BlazorLife.Client.ViewModels
             CanvasFunctions.ClearCanvas();
             _gameService.AddLife(Creatures.CreateGlider(10, 10));
 
+            _watch.Reset();
             DrawCurrentGeneration();
         }
 
