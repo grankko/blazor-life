@@ -18,7 +18,7 @@ namespace BlazorLife.Client.ViewModels
 
     public class GameViewModel
     {
-        const int SleepTimeBetweenGenerations = 100;
+        const int SleepTimeBetweenGenerations = 10;
         const int CanvasCellSize = 5;
      
         private Timer _timer;
@@ -57,6 +57,8 @@ namespace BlazorLife.Client.ViewModels
             _watch = new Stopwatch();
             
             SelectedTool = Tool.Cell;
+
+            Console.WriteLine("GameViewModel created");
         }
 
         public void Init()

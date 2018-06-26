@@ -23,8 +23,10 @@
         // Also resize on window event
         function resizeCanvas() {
             var canvas = document.getElementById('playingFieldCanvas');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 180;
+            if (canvas !== null) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight - 180;
+            }
             return true; // hack
         }
 
