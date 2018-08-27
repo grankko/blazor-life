@@ -52,7 +52,7 @@ namespace BlazorLife.Server
                 RequestPath = new PathString("/.well-known"),
                 ServeUnknownFileTypes = true // serve extensionless files
             });
-            app.UseBlazor<Client.Program>();
+            app.UseBlazor<BlazorLife.Client.App>();
         }
     }
 }

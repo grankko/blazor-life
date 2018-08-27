@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Blazor.Browser.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace BlazorLife.Client.Interop
 {
@@ -12,22 +10,22 @@ namespace BlazorLife.Client.Interop
 
         public static void AddCanvasMouseEvent()
         {
-            RegisteredFunction.Invoke<bool>("addCanvasMouseEvent");
+            JSRuntime.Current.InvokeAsync<bool>("addCanvasMouseEvent");
         }
 
         public static void ClearCanvas()
         {
-            RegisteredFunction.Invoke<bool>("clearCanvas");
+            JSRuntime.Current.InvokeAsync<bool>("clearCanvas");
         }        
 
         public static void DrawCellsOnCanvas(IEnumerable<int> xCoordinates, IEnumerable<int> yCoordinates, int cellSize)
         {
-            RegisteredFunction.Invoke<bool>("drawAllOnCanvas", xCoordinates, yCoordinates, cellSize);
+            JSRuntime.Current.InvokeAsync<bool>("drawAllOnCanvas", xCoordinates, yCoordinates, cellSize);
         }
 
         public static void ResizeCanvas()
         {
-            RegisteredFunction.Invoke<bool>("resizeCanvas");
+            JSRuntime.Current.InvokeAsync<bool>("resizeCanvas");
         }
 
         public static void OnCanvasClicked(string x, string y)

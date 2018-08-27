@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Blazor.Browser.Interop;
+﻿using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace BlazorLife.Client.Interop
     {
         public static void UpdateElementInnerHtml(string id, string html)
         {
-            RegisteredFunction.Invoke<bool>("updateElementInnerHtml", id, html);
+            JSRuntime.Current.InvokeAsync<bool>("updateElementInnerHtml", id, html);
         }
     }
 }
