@@ -28,12 +28,10 @@ namespace BlazorLife.Client.Interop
             JSRuntime.Current.InvokeAsync<bool>("resizeCanvas");
         }
 
-        public static void OnCanvasClicked(string x, string y)
+        [JSInvokable]
+        public static void OnCanvasClicked(int x, int y)
         {
-            int xValue = int.Parse(x);
-            int yValue = int.Parse(y);
-
-            CanvasClicked(null, new CanvasClickedEventArgs(xValue, yValue));
+            CanvasClicked(null, new CanvasClickedEventArgs(x,y));
         }
     }
 }

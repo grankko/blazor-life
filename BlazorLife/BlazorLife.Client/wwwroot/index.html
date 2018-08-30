@@ -80,34 +80,18 @@
 
         // Interop from JS to Blazor when Canvas is clicked to carry coordinates
         function canvasClicked(event) {
-                event = event || window.event;
+            event = event || window.event;
 
             var canvas = document.getElementById('playingFieldCanvas'),
                 x = event.pageX - canvas.offsetLeft,
                 y = event.pageY - canvas.offsetTop;
 
-            const assemblyName = 'BlazorLife.Client';
-            const namespace = 'BlazorLife.Client.Interop';
-            const typeName = 'CanvasFunctions';
-            const methodName = 'OnCanvasClicked';
+            let assemblyName = 'BlazorLife.Client';
+            let methodName = 'OnCanvasClicked';
 
-            const selectedCustomerMethod = Blazor.platform.findMethod(
-                assemblyName,
-                namespace,
-                typeName,
-                methodName
-            );
-
-            Blazor.platform.callMethod(selectedCustomerMethod,null,[Blazor.platform.toDotNetString(x.toString()),Blazor.platform.toDotNetString(y.toString())]);
+            DotNet.invokeMethodAsync(assemblyName, methodName, x, y);
         }
 
-        // Register interops from Blazor to JS
-        Blazor.registerFunction('updateElementInnerHtml', updateElementInnerHtml);
-        Blazor.registerFunction('clearCanvas', clearCanvas);
-        Blazor.registerFunction('addCanvasMouseEvent', addCanvasMouseEvent);
-        Blazor.registerFunction('resizeCanvas', resizeCanvas);
-        Blazor.registerFunction('drawOnCanvas', drawOnCanvas);
-        Blazor.registerFunction('drawAllOnCanvas', drawAllOnCanvas);
     </script>
 </body>
 </html>
