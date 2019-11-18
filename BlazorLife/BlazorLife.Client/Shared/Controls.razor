@@ -1,0 +1,59 @@
+﻿@using BlazorLife.Client.ViewModels
+@using BlazorLife.Client.Interop
+@using System.Timers;
+@inject GameViewModel ViewModel
+@inject JavascriptService JavascriptService
+
+<div class="container">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-8">
+            <div class="btn-group" role="group" aria-label="Tools">
+                <button type="button" class="btn btn-primary" @onclick="ViewModel.Start" disabled="@ViewModel.IsRunning">Start</button>
+                <button type="button" class="btn btn-primary" @onclick="ViewModel.Stop" disabled="@(!ViewModel.IsRunning)">Stop</button>
+            </div>
+            <button class="btn btn-secondary" @onclick="ViewModel.Reset">Reset</button>
+            <button class="btn btn-secondary" @onclick="ViewModel.StepOneGeneration">Step one generation</button>
+        </div>
+        <div class="col-4">
+            <div>Current live cells: <span id="currentLiveCellsSpan">@ViewModel.NumberOfLiveCells</span></div>
+            <div>Current generation: <span id="currentGenerationSpan">@ViewModel.CurrentGeneration</span></div>
+            <div>Avg generation time: <span id="currentGenerationSpan">@ViewModel.AverageGenerationTime</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="btn-group" role="group" aria-label="Tools">
+                <button type="button" class="btn btn-secondary" @onclick="(e => ViewModel.SelectedTool = Tool.Cell)" disabled=@(ViewModel.SelectedTool == Tool.Cell)>Cell</button>
+                <button type="button" class="btn btn-secondary" @onclick="(e => ViewModel.SelectedTool = Tool.Glider)" disabled=@(ViewModel.SelectedTool == Tool.Glider)>Glider</button>
+                <button type="button" class="btn btn-secondary" @onclick="(e => ViewModel.SelectedTool = Tool.Infinite)" disabled=@(ViewModel.SelectedTool == Tool.Infinite)>Infinite</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            ViewModel.Init();
+    }
+
+    protected override void OnInitialized()
+    {
+        JavascriptService.CanvasClicked += OnCanvasClicked;
+        ViewModel.StateChanged += OnStateChanged;
+    }
+
+    protected void OnCanvasClicked(object sender, CanvasClickedEventArgs e)
+    {
+        ViewModel.AddLife(e.X, e.Y);
+        this.StateHasChanged();
+    }
+
+    protected void OnStateChanged(object sender, EventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
+}

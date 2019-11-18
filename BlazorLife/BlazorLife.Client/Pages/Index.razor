@@ -1,0 +1,15 @@
+﻿@using BlazorLife.Client.Interop
+@inject JavascriptService JavascriptService
+
+@page "/"
+
+<canvas id="playingFieldCanvas"></canvas>
+
+@functions {
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        JavascriptService.ResizeCanvas();
+    }
+
+}

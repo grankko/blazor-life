@@ -23,6 +23,7 @@ namespace BlazorLife.Client.ViewModels
      
         private Timer _timer;
         private GameService _gameService;
+        private JavascriptService _javascriptService;
         private Stopwatch _watch;
 
         public bool IsRunning { get; set; }
@@ -47,9 +48,11 @@ namespace BlazorLife.Client.ViewModels
 
         public long AverageGenerationTime { get; private set; }
 
-        public GameViewModel(GameService gameService)
+        public GameViewModel(GameService gameService, JavascriptService javascriptService)
         {
             _gameService = gameService;
+            _javascriptService = javascriptService;
+
             _timer = new Timer();
             _timer.Interval = SleepTimeBetweenGenerations;
             _timer.Elapsed += TimerElapsed;
@@ -63,7 +66,7 @@ namespace BlazorLife.Client.ViewModels
 
         public void Init()
         {
-            CanvasFunctions.AddCanvasMouseEvent();
+            _javascriptService.AddCanvasMouseEvent();
             DrawCurrentGeneration();
         }
 
@@ -122,7 +125,7 @@ namespace BlazorLife.Client.ViewModels
         {
             Stop();
             _gameService.Reset();
-            CanvasFunctions.ClearCanvas();
+            _javascriptService.ClearCanvas();
             _gameService.AddLife(Creatures.CreateGlider(10, 10));
 
             _watch.Reset();
@@ -135,8 +138,8 @@ namespace BlazorLife.Client.ViewModels
             var xCoordinates = new List<int>(_gameService.AllLife.Select(life => life.X * CanvasCellSize)).ToList();
             var yCoordinates = new List<int>(_gameService.AllLife.Select(life => life.Y * CanvasCellSize)).ToList();
 
-            CanvasFunctions.ClearCanvas();
-            CanvasFunctions.DrawCellsOnCanvas(xCoordinates, yCoordinates, CanvasCellSize);
+            _javascriptService.ClearCanvas();
+            _javascriptService.DrawCellsOnCanvas(xCoordinates, yCoordinates, CanvasCellSize);
         }
 
 

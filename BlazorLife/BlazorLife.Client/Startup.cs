@@ -1,19 +1,26 @@
 ﻿using BlazorLife.Client;
+using BlazorLife.Client.Interop;
 using BlazorLife.Client.ViewModels;
 using BlazorLife.Game;
-using Microsoft.AspNetCore.Blazor.Builder;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-public class Startup
+namespace BlazorLife.Client
 {
-    public void ConfigureServices(IServiceCollection services)
+    public class Startup
     {
-        services.AddSingleton<GameService>();
-        services.AddSingleton<GameViewModel>();
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<GameService>();
+            services.AddSingleton<GameViewModel>();
+            services.AddSingleton<JavascriptService>();
+        }
+
+        public void Configure(IComponentsApplicationBuilder app)
+        {
+            app.AddComponent<App>("app");
+        }
     }
 
-    public void Configure(IBlazorApplicationBuilder app)
-    {
-        app.AddComponent<App>("app");
-    }
 }
