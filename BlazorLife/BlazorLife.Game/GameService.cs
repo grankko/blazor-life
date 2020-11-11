@@ -5,6 +5,7 @@ namespace BlazorLife.Game
 {
     public class GameService
     {
+
         public HashSet<LifeInstance> AllLife { get; private set; }
 
         public int CurrentGenerationNumber { get; set; }

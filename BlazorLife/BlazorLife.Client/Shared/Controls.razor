@@ -1,6 +1,5 @@
 ﻿@using BlazorLife.Client.ViewModels
 @using BlazorLife.Client.Interop
-@using System.Timers;
 @inject GameViewModel ViewModel
 @inject JavascriptService JavascriptService
 
@@ -17,7 +16,7 @@
         <div class="col-4">
             <div>Current live cells: <span id="currentLiveCellsSpan">@ViewModel.NumberOfLiveCells</span></div>
             <div>Current generation: <span id="currentGenerationSpan">@ViewModel.CurrentGeneration</span></div>
-            <div>Avg generation time: <span id="currentGenerationSpan">@ViewModel.AverageGenerationTime</span></div>
+            <div>Avg generation time: <span id="avgGenerationSpan">@ViewModel.AverageGenerationTime</span></div>
         </div>
     </div>
     <div class="row">
