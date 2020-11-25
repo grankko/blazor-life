@@ -45,22 +45,19 @@ namespace SpectreLife.ConsoleClient
         {
             AnsiConsole.Cursor.Hide();
 
-            var xCoordinates = new List<int>(_gameService.AllLife.Select(life => life.X)).ToList();
-            var yCoordinates = new List<int>(_gameService.AllLife.Select(life => life.Y)).ToList();
-
             var canvas = new Canvas((AnsiConsole.Width / PixelSize) - Padding, Console.WindowHeight - Padding);
             canvas.PixelWidth = PixelSize;
 
+            // fill background of canvas
             for (int x = 0; x < canvas.Width; x++)
                 for (int y = 0; y < canvas.Height; y++)
                     canvas.SetPixel(x, y, Color.NavajoWhite1);
 
-            for (int i = 0; i < yCoordinates.Count; i++)
+            // draw the current generation of life
+            foreach (var life in _gameService.AllLife)
             {
-                var x = xCoordinates[i];
-                var y = yCoordinates[i];
-                if (x >= 0 && x < canvas.Width && y >=0 && y < canvas.Height)
-                    canvas.SetPixel(x, y, Color.Red3_1);
+                if (life.X >= 0 && life.X < canvas.Width && life.Y >= 0 && life.Y < canvas.Height)
+                    canvas.SetPixel(life.X, life.Y, Color.Red3_1);
             }
 
             AnsiConsole.Render(canvas);
